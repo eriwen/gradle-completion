@@ -362,10 +362,18 @@ _gradle() {
 
     IFS="$OLDIFS"
 
-    # Remove description ("[:space:]" and after) if only one possibility
-    if [[ ${#COMPREPLY[*]} -eq 1 ]]; then
-        COMPREPLY=( ${COMPREPLY[0]%%  *} )
-    fi
+    case "$prev" in
+        -b|--build-file|-c|--settings-file|-I|--init-script|-g|--gradle-user-home|--include-build|--project-cache-dir|--project-dir)
+            # compopt not available on bash 3.x
+            type compopt &>/dev/null && compopt -o filenames
+            return 0
+            ;;
+        *)
+            # Remove description ("[:space:]" and after) if only one possibility
+            if [[ ${#COMPREPLY[*]} -eq 1 ]]; then
+                COMPREPLY=( ${COMPREPLY[0]%%  *} )
+            fi
+    esac
 
     return 0
 }
